@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Market Insight Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <h1>Market Insight Assistant</h1>
+        <p>
+          Analyze market conditions using RSI, moving averages, and a lightweight
+          chart image trend detector.
+        </p>
+      </header>
+
+      <section class="card">
+        <h2>Upload your data</h2>
+        <form method="post" enctype="multipart/form-data">
+          <label class="field">
+            RSI period
+            <input type="number" name="period" value="14" min="2" />
+          </label>
+          <label class="field">
+            Price CSV (one column of prices)
+            <input type="file" name="price_csv" accept=".csv" />
+          </label>
+          <label class="field">
+            Chart image (PNG/JPG)
+            <input type="file" name="chart_image" accept="image/*" />
+          </label>
+          <button type="submit">Analyze</button>
+        </form>
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+      </section>
+
+      <section class="card">
+        <h2>Recommendation</h2>
+        {% if recommendation %}
+        <div class="recommendation">{{ recommendation }}</div>
+        <ul>
+          {% for reason in reasons %}
+          <li>{{ reason }}</li>
+          {% endfor %}
+        </ul>
+        {% else %}
+        <p>No analysis yet. Upload a chart image or CSV to get started.</p>
+        {% endif %}
+      </section>
+
+      <section class="card">
+        <h2>Indicator Details</h2>
+        <div class="grid">
+          <div>
+            <h3>RSI</h3>
+            <p>
+              {% if indicators.rsi is not none %}
+              {{ "%.2f"|format(indicators.rsi) }}
+              {% else %}
+              Not available
+              {% endif %}
+            </p>
+          </div>
+          <div>
+            <h3>SMA</h3>
+            <p>
+              {% if indicators.sma is not none %}
+              {{ "%.2f"|format(indicators.sma) }}
+              {% else %}
+              Not available
+              {% endif %}
+            </p>
+          </div>
+          <div>
+            <h3>EMA</h3>
+            <p>
+              {% if indicators.ema is not none %}
+              {{ "%.2f"|format(indicators.ema) }}
+              {% else %}
+              Not available
+              {% endif %}
+            </p>
+          </div>
+        </div>
+        {% if image_trend %}
+        <div class="trend">
+          <h3>Image Trend</h3>
+          <p>{{ image_trend.direction }} ({{ image_trend.details }})</p>
+        </div>
+        {% endif %}
+      </section>
+
+      <footer>
+        <p class="disclaimer">
+          Disclaimer: This demo provides heuristic analysis and is not financial
+          advice.
+        </p>
+      </footer>
+    </main>
+  </body>
+</html>
